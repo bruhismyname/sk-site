@@ -1,0 +1,1 @@
+INFO  2025-12-13T20:19:44 +161ms service=default version=1.0.152 args=["--print-logs","--log-level","DEBUG"] opencode

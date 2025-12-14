@@ -1,7 +1,13 @@
-import { FaCheckCircle, FaAward, FaUserMd, FaCertificate, FaGraduationCap, FaCalendarCheck } from 'react-icons/fa';
+'use client';
+import { FaCheckCircle, FaUserMd, FaCertificate, FaGraduationCap, FaCalendarCheck } from 'react-icons/fa';
 import { SITE_CONFIG, PROFILE } from '../lib/constants';
 import AnimatedSection from './AnimatedSection';
+import { useInView } from '@/app/hooks/useInView';
+import { useCounter } from '@/app/hooks/useCounter';
+import { useRef } from 'react';
 export default function About() {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const { hasBeenInView } = useInView(statsRef, { threshold: 0.3 });
   const credentials = [
     {
       icon: FaCertificate,
@@ -62,8 +68,8 @@ export default function About() {
                 </div>
               </div>
               
-              {/* Decorative Badge */}
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-xl">
+              {/* Decorative Badge - DIPERBAIKI: Safe positioning untuk mobile */}
+              <div className="absolute bottom-2 left-2 sm:-bottom-6 sm:-left-6 bg-white rounded-2xl p-4 sm:p-6 shadow-xl">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                     <FaCheckCircle className="text-2xl text-green-500" />
@@ -127,21 +133,64 @@ export default function About() {
           </div>
         </div>
         {/* Stats Bar - 3 columns */}
-        <div className="max-w-6xl mx-auto">
+        <div ref={statsRef} className="max-w-6xl mx-auto">
           <AnimatedSection variant="scaleUp" delay={0.5}>
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 md:p-12 shadow-xl">
-              <div className="grid md:grid-cols-3 gap-8 text-center text-white">
-                {PROFILE.stats.map((stat, index) => (
-                  <div key={index} className="space-y-2">
-                    <p className="text-4xl md:text-5xl font-bold">{stat.value}</p>
-                    <p className="text-lg md:text-xl opacity-90">{stat.label}</p>
-                  </div>
-                ))}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 md:p-12 shadow-xl relative overflow-hidden">
+              {/* Animated Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 right-0 w-48 sm:w-64 h-48 sm:h-64 bg-white rounded-full blur-3xl animate-pulse-slow" />
+                <div className="absolute bottom-0 left-0 w-48 sm:w-64 h-48 sm:h-64 bg-white rounded-full blur-3xl animate-pulse-slow animation-delay-400" />
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-8 text-center text-white relative z-10">
+                <StatCounter 
+                  endValue={20}
+                  label="Tahun Pengalaman"
+                  suffix="+"
+                  isVisible={hasBeenInView}
+                />
+                <StatCounter 
+                  endValue={1000}
+                  label="Ibu Terbantu"
+                  suffix="+"
+                  isVisible={hasBeenInView}
+                />
+                <StatCounter 
+                  endValue={6}
+                  label="Pelayanan per Minggu"
+                  suffix=" Hari"
+                  isVisible={hasBeenInView}
+                />
               </div>
             </div>
           </AnimatedSection>
         </div>
       </div>
     </section>
+  );
+}
+// Animated Counter Component
+function StatCounter({ 
+  endValue, 
+  label, 
+  suffix = '', 
+  isVisible 
+}: { 
+  endValue: number; 
+  label: string; 
+  suffix?: string;
+  isVisible: boolean;
+}) {
+  const count = useCounter(endValue, 2000, isVisible);
+  
+  return (
+    <div className="space-y-2 group">
+      <p className="text-4xl md:text-5xl font-bold transition-transform group-hover:scale-110 duration-300">
+        {isVisible ? count : 0}{suffix}
+      </p>
+      <p className="text-lg md:text-xl opacity-90 group-hover:opacity-100 transition-opacity">
+        {label}
+      </p>
+    </div>
   );
 }

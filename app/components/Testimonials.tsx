@@ -1,35 +1,37 @@
+'use client';
 import { TESTIMONIALS } from '@/app/lib/constants';
-import { FaStar, FaQuoteLeft } from 'react-icons/fa';
+import { FaStar, FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import AnimatedSection from './AnimatedSection';
-
-const testimonials = [
-  {
-    name: "Ibu Siti",
-    role: "Pasien Ibu Hamil",
-    text: "Pelayanan yang sangat ramah dan profesional. Bidan Shofi selalu sabar menjelaskan kondisi kehamilan saya. Sangat recommended!",
-    rating: 5,
-  },
-  {
-    name: "Ibu Ani",
-    role: "Pasien KB",
-    text: "Tempatnya nyaman dan bersih. Pelayanan cepat dan tidak perlu antri lama. Bidan Shofi sangat memperhatikan kenyamanan pasien.",
-    rating: 5,
-  },
-  {
-    name: "Ibu Rina",
-    role: "Pasien Imunisasi",
-    text: "Anak saya selalu tenang saat imunisasi di sini. Bidan Shofi sangat lembut dan perhatian kepada anak-anak.",
-    rating: 5,
-  },
-  {
-    name: "Ibu Dewi",
-    role: "Pasien Posyandu",
-    text: "Jadwal posyandu yang teratur dan pelayanan yang memuaskan. Sangat membantu untuk memantau tumbuh kembang anak.",
-    rating: 5,
-  },
-];
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export default function Testimonials() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  
+  // Auto-play carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      paginate(1);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+  
+  const paginate = (newDirection: number) => {
+    setDirection(newDirection);
+    setCurrentIndex((prevIndex) => {
+      if (newDirection === 1) {
+        return prevIndex === TESTIMONIALS.length - 1 ? 0 : prevIndex + 1;
+      } else {
+        return prevIndex === 0 ? TESTIMONIALS.length - 1 : prevIndex - 1;
+      }
+    });
+  };
+
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset: number, velocity: number) => {
+    return Math.abs(offset) * velocity;
+  };
   return (
     <section id="testimoni" className="py-16 md:py-24 bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,42 +48,146 @@ export default function Testimonials() {
           </div>
         </AnimatedSection>
 
-        {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {TESTIMONIALS.map((testimonial, index) => (
-            <AnimatedSection 
-              key={testimonial.id} 
-              variant="scaleUp" 
-              delay={0.2 + (index * 0.1)}
+        {/* Testimonials Carousel */}
+        <div className="relative max-w-4xl mx-auto">
+          <div className="overflow-hidden">
+            <AnimatePresence initial={false} custom={direction} mode="wait">
+              <motion.div
+                key={currentIndex}
+                custom={direction}
+                variants={{
+                  enter: (direction: number) => ({
+                    x: direction > 0 ? 1000 : -1000,
+                    opacity: 0,
+                  }),
+                  center: {
+                    zIndex: 1,
+                    x: 0,
+                    opacity: 1,
+                  },
+                  exit: (direction: number) => ({
+                    zIndex: 0,
+                    x: direction < 0 ? 1000 : -1000,
+                    opacity: 0,
+                  }),
+                }}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: 'spring', stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={1}
+                onDragEnd={(e, { offset, velocity }) => {
+                  const swipe = swipePower(offset.x, velocity.x);
+                  if (swipe < -swipeConfidenceThreshold) {
+                    paginate(1);
+                  } else if (swipe > swipeConfidenceThreshold) {
+                    paginate(-1);
+                  }
+                }}
+                className="w-full"
+              >
+                <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl">
+                  {/* Quote Icon */}
+                  <motion.div 
+                    className="mb-6"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: 'spring' }}
+                  >
+                    <FaQuoteLeft className="text-5xl text-blue-200" />
+                  </motion.div>
+                  
+                  {/* Stars */}
+                  <div className="flex gap-1 mb-6">
+                    {[...Array(TESTIMONIALS[currentIndex].rating)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3 + i * 0.1 }}
+                      >
+                        <FaStar className="text-yellow-400 text-xl" />
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* Text */}
+                  <motion.p 
+                    className="text-gray-700 text-lg md:text-xl leading-relaxed mb-8 italic"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    &ldquo;{TESTIMONIALS[currentIndex].text}&rdquo;
+                  </motion.p>
+                  
+                  {/* Author */}
+                  <motion.div 
+                    className="flex items-center gap-4 pt-6 border-t border-gray-200"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                      {TESTIMONIALS[currentIndex].initial}
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 text-lg">{TESTIMONIALS[currentIndex].name}</p>
+                      <p className="text-sm text-gray-600">{TESTIMONIALS[currentIndex].role}</p>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          
+          {/* Navigation Buttons */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <motion.button
+              onClick={() => paginate(-1)}
+              className="w-12 h-12 rounded-full bg-white shadow-lg hover:shadow-xl flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-all"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all h-full flex flex-col">
-                {/* Quote Icon */}
-                <div className="mb-4">
-                  <FaQuoteLeft className="text-3xl text-blue-200" />
-                </div>
-                {/* Stars */}
-                <div className="flex gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <FaStar key={i} className="text-yellow-400 text-sm" />
-                  ))}
-                </div>
-                {/* Text */}
-                <p className="text-gray-700 leading-relaxed mb-6 flex-grow italic">
-                  "{testimonial.text}"
-                </p>
-                {/* Author */}
-                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
-                    {testimonial.initial}
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">{testimonial.name}</p>
-                    <p className="text-xs text-gray-600">{testimonial.role}</p>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          ))}
+              <FaChevronLeft />
+            </motion.button>
+            
+            {/* Dots Indicator */}
+            <div className="flex gap-2">
+              {TESTIMONIALS.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setDirection(index > currentIndex ? 1 : -1);
+                    setCurrentIndex(index);
+                  }}
+                  className="group"
+                >
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      index === currentIndex 
+                        ? 'w-8 bg-blue-600' 
+                        : 'w-2 bg-gray-300 group-hover:bg-blue-400'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+            
+            <motion.button
+              onClick={() => paginate(1)}
+              className="w-12 h-12 rounded-full bg-white shadow-lg hover:shadow-xl flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-all"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <FaChevronRight />
+            </motion.button>
+          </div>
         </div>
       </div>
     </section>

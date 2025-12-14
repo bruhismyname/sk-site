@@ -16,7 +16,7 @@ export const SITE_CONFIG = {
   name: 'Bidan Shofiastuti K',
   fullName: 'Bidan Shofiastuti K, A.Md.Keb',
   tagline: 'Memberikan Pelayanan Kebidanan yang Sayang Ibu dan Anak Secara Profesional',
-  description: 'Bidan Shofiastuti K melayani pemeriksaan kehamilan, KB, imunisasi, home visit di Desa Sari, Gajah, Demak. Berpengalaman sejak 2005.',
+  description: 'Bidan Shofiastuti K melayani pemeriksaan kehamilan, KB, imunisasi, home visit di Desa Sari, Gajah, Demak. Berpengalaman dan kompeten di bidangnya.',
   domain: 'bidanshofi.my.id',
   foundedYear: 2005,
   currentYear: new Date().getFullYear(),

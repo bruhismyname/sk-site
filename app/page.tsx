@@ -9,12 +9,14 @@ import Contact from '@/app/components/Contact';
 import Footer from '@/app/components/Footer';
 import WhatsAppButton from '@/app/components/WhatsAppButton';
 import BackToTop from '@/app/components/BackToTop';
+import CalculatorHPL from '@/app/components/CalculatorHPL'; // Import baru
 export default function Home() {
   return (
     <>
       <Header />
       <main>
         <Hero />
+        <CalculatorHPL />
         <About />
         <Services />
         <Schedule />
@@ -24,7 +26,6 @@ export default function Home() {
       </main>
       <Footer />
       <WhatsAppButton />
-      <BackToTop />
     </>
   );
 }

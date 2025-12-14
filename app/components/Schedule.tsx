@@ -1,5 +1,5 @@
 import { FaClock, FaMapMarkerAlt, FaCalendarAlt, FaPhoneAlt, FaHome } from 'react-icons/fa';
-import { SCHEDULE, LOCATION, CONTACT_INFO } from '../lib/constants';
+import { SCHEDULE, LOCATION } from '../lib/constants';
 import AnimatedSection from './AnimatedSection';
 export default function Schedule() {
   return (

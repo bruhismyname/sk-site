@@ -26,11 +26,11 @@ export default function Contact() {
   ];
   return (
     <section id="kontak" className="relative py-16 md:py-24 bg-gradient-to-b from-white via-blue-50 to-purple-50 overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-20 right-10 w-40 h-40 bg-blue-200 rounded-full opacity-30 blur-3xl"></div>
-      <div className="absolute bottom-20 left-10 w-60 h-60 bg-purple-200 rounded-full opacity-30 blur-3xl"></div>
+      {/* Decorative Elements - DIPERBAIKI: Safe positioning */}
+      <div className="absolute top-20 right-2 sm:right-10 w-32 sm:w-40 h-32 sm:h-40 bg-blue-200 rounded-full opacity-30 blur-3xl"></div>
+      <div className="absolute bottom-20 left-2 sm:left-10 w-48 sm:w-60 h-48 sm:h-60 bg-purple-200 rounded-full opacity-30 blur-3xl"></div>
       
-      {/* Decorative Dots Pattern */}
+      {/* Decorative Dots Pattern - Tetap hidden di mobile */}
       <div className="absolute top-32 right-1/4 hidden lg:grid grid-cols-3 gap-2 opacity-20">
         {[...Array(9)].map((_, i) => (
           <div key={i} className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -58,9 +58,9 @@ export default function Contact() {
         <div className="max-w-4xl mx-auto mb-12">
           <AnimatedSection variant="scaleUp" delay={0.2}>
             <div className="relative bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 rounded-3xl p-8 md:p-12 shadow-2xl overflow-hidden">
-              {/* Decorative circles inside card */}
-              <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
+              {/* Decorative circles inside card - DIPERBAIKI: Safe negative margins */}
+              <div className="absolute top-0 right-0 w-32 sm:w-40 h-32 sm:h-40 bg-white/10 rounded-full mr-0 sm:-mr-20 mt-0 sm:-mt-20"></div>
+              <div className="absolute bottom-0 left-0 w-24 sm:w-32 h-24 sm:h-32 bg-white/10 rounded-full ml-0 sm:-ml-16 mb-0 sm:-mb-16"></div>
               
               <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
                 {/* Left: Icon & Info */}
@@ -80,10 +80,10 @@ export default function Contact() {
                   </p>
                   
                   <div className="flex items-center gap-3 p-4 bg-white/10 backdrop-blur-sm rounded-xl">
-                    <FaComments className="text-2xl text-white/80" />
-                    <div>
+                    <FaComments className="text-2xl text-white/80 flex-shrink-0" />
+                    <div className="min-w-0">
                       <p className="text-xs text-white/70">Nomor WhatsApp</p>
-                      <p className="font-bold text-xl">{CONTACT_INFO.whatsapp.number}</p>
+                      <p className="font-bold text-xl break-all">{CONTACT_INFO.whatsapp.number}</p>
                     </div>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ export default function Contact() {
                         <Icon className="text-3xl text-white" />
                       </div>
                       
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <h4 className="text-xl font-bold text-gray-900 mb-2">
                           {contact.label}
                         </h4>

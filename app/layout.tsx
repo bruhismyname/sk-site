@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SITE_CONFIG, SEO_KEYWORDS, LOCATION } from "@/app/lib/constants";
-
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -77,11 +76,16 @@ export default function RootLayout({
         <meta name="geo.placename" content={`${LOCATION.district}, ${LOCATION.province}`} />
         <meta name="geo.position" content={`${LOCATION.coordinates.lat};${LOCATION.coordinates.lng}`} />
         <meta name="ICBM" content={`${LOCATION.coordinates.lat}, ${LOCATION.coordinates.lng}`} />
+        {/* DITAMBAHKAN: Viewport meta untuk proper mobile rendering */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        {/* DITAMBAHKAN: Wrapper untuk safety net overflow */}
+        <div className="relative w-full overflow-x-hidden">
+          {children}
+        </div>
       </body>
     </html>
   );
